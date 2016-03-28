@@ -1,0 +1,22 @@
+! version = 2.0
+
+> object setvar javascript
+	// Example of how to get the current user's ID and set
+	// variables for them.
+	var uid = rs.currentUser();
+	var name  = args.shift();
+	var value = args.join(" ");
+	rs.setUservar(uid, name, value);
+	return uid;
+< object
+//
+
++ what is my id
+- Your user ID is Mr. <call> setvar </call>
+
++ show my variables
+- Your variables are <call> showvar </call>
+
+> object showvar javascript
+	return rs.getUservars();
+< object

@@ -1,0 +1,122 @@
+! version = 2.0
+! global debug = true
+
+! local concat = space
+
++ tesla
+- Tesla stock price is <call> getTeslaStockPrice </call>
+
++ *
+- Sorry, what do you mean by that?
+- Could you phrase that differently?
+
++ (hi|hello|yo|sup|hai|greetings|hi there)
+- Hi there! I'm Cleo, the digital assistant and I'm here to answer all your
+^ questions about our company and products. What is your name?
+
++ [my name is| its] _
+% [*] what is your name
+- <set name=<formal>> Nice to meet you <get name>! Where are you from?
+
++ [i am from|from] _
+% * where are you from
+- <set location=<star>> Are you a business owner or looking to establish one?
+
++ (business *|[*] owner)
+% * looking to establish one
+- What kind of business is it?
+
+
++ ([*] working [*]| * establish| [*] establishing [*])
+% * looking to establish one
+- What kind of business is it? {topic=newBusiness}
+
+> topic newBusiness
+  + *
+  % what kind of business is it
+  - Great, using a digital assistant can lower your customer service costs by
+  ^ 80%, simply by delegating it your typical tasks and freeing your team's
+  ^ valuable time to deal with more sophisticated issues and grow business!
+  ^ You see, while our team is busy working on the infrastructure and improving
+  ^ my capabilities, I'm here chatting to my new friend <get name> :). Would
+  ^ you like to know more about my features?
+
+  + [*] (@yes| sure| go ahead) [*]
+  % * features
+  - Besides having an awesome personality I can also manipulate data and perform
+  ^ various tasks for you. For example Tesla stock price is $246.36
+  ^ right now, cool huh? {topic=random}
+
+  + [*] (@no) [*]
+  % * features
+  - In any case, I'm very flexible with my functionality and can learn very
+  ^ quickly. What are some tasks or customer service requests that you spend most
+  ^ of your time on? {topic=random}
+
+< topic
+
++ *
+% what kind of business is it
+- Are you using a digital assistant already?
+
++ (@yes)
+% are you using a digital assistant already
+- What is it called?
+
++ (@no)
+% are you using a digital assistant already
+- Great, using a digital assistant can lower your customer service costs by
+^ 80%, simply by delegating it your typical tasks and freeing your team's
+^ valuable time to deal with more sophisticated issues and grow business!
+^ You see, while our team is busy working on the infrastructure and improving
+^ my capabilities, I'm here chatting to my new friend <get name> :). Would
+^ you like to know more about my features? {topic=newBusiness}
+
++ [*] cleo {weight=10}
+% what is it called
+- Hey that's me! How do you like it?
+
++ *
+% * like it
+- Thanks, I'll make a note of that.
+
++ *
+% what is it called
+- I doubt that its as smart as me though. Besides having an awesome personality
+^ I can also manipulate data and perform various tasks for you. For example
+^ Tesla stock price is $246.36 right now, cool huh?
+
++ *
+% * cool huh
+- In any case, I'm very flexible with my functionality and can learn very
+^ quickly. What are some tasks or customer service requests that you spend most
+^ of your time on?
+
++ *
+% [*] requests that you spend most of your time on [*]
+- I can defenitely see ways to improve your customer's experience and benefit
+^ your business. I'll send a request to my team to contact you for further
+^ discussion, let me just confirm some info. What is your email address?
+
++ *
+% * what is your email address
+- <set email=<start>> What is your phone number? //{topic=getnumber}
+
+//> topic getnumber
+
+  + #
+  % what is your phone number
+  - <set phone_number=<star>> If you have an additional message to our team, you can
+  ^ type it now to be included in the request.
+
+//  + _
+//  - Please use digits and "-" only without spaces.
+
+//< topic
+
+
++ *
+% * to be included in the request
+- <set request_message=<star>> Thank you! Our team will contact you shortly,
+^ you can also contact us at info@cleo.ml. Is there anything else I can help
+^ you with?
