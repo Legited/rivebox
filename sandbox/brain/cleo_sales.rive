@@ -4,7 +4,7 @@
 ! local concat = space
 
 + tesla
-- Tesla stock price is <call> getTeslaStockPrice </call>
+- Tesla stock price is <call>getStockPrice</call>
 
 + *
 - Sorry, what do you mean by that?

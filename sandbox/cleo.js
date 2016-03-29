@@ -29,6 +29,29 @@ var getWeather = function(location, callback) {
   });
 };
 
+var getStockPrice = function (url, callback) {
+  request(url, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      var jsonpData = body;
+      var json;
+      //if you don't know for sure that you are getting jsonp, then i'd do something like this
+      try
+      {
+        json = JSON.parse(jsonpData);
+      }
+      catch(e)
+      {
+          var startPos = jsonpData.indexOf('({');
+          var endPos = jsonpData.indexOf('})');
+          var jsonString = jsonpData.substring(startPos+1, endPos+1);
+          json = JSON.parse(jsonString);
+        }
+        callback.call(this, null, json);
+      } else {
+        callback.call(this, error);
+      }
+    })
+}
 
 rs.setSubroutine("getWeather", function (rs, args)  {
   return new rs.Promise(function(resolve, reject) {
@@ -57,41 +80,18 @@ rs.setSubroutine("checkForRain", function(rs, args) {
   });
 });
 
-var getTeslaStockPrice = function(callback) {
-  var getJsonFromJsonP = function (url, callback) {
-    request(url, function (error, response, body) {
-      if (!error && response.statusCode == 200) {
-        var jsonpData = body;
-        var json;
-        //if you don't know for sure that you are getting jsonp, then i'd do something like this
-        try
-        {
-          json = JSON.parse(jsonpData);
-        }
-        catch(e)
-        {
-          var startPos = jsonpData.indexOf('({');
-          var endPos = jsonpData.indexOf('})');
-          var jsonString = jsonpData.substring(startPos+1, endPos+1);
-          json = JSON.parse(jsonString);
-        }
-        callback(null, json);
-      } else {
-        callback(error);
-      }
-    })
-  }
-  var api = 'http://dev.markitondemand.com/MODApis/Api/v2/Quote/jsonp?symbol=TSLA&callback=getQuote';
-  getJsonFromJsonP(api, function (err, data) {
-      //console.log(data.LastPrice);
-      return data.LastPrice;
-  });
-}
+var stockPriceApi = 'http://dev.markitondemand.com/MODApis/Api/v2/Quote/jsonp?symbol=TSLA&callback=getQuote';
 
-rs.setSubroutine("getTeslaStockPrice", function (rs, args) {
+rs.setSubroutine("getStockPrice", function (rs, args) {
   return new rs.Promise(function(resolve, reject) {
-    getTeslaStockPrice(function() {
-        resolve();
+    getStockPrice(stockPriceApi, function(error, data) {
+        if(error) {
+          console.error('');
+          reject(error);
+        } else {
+          var price = '$' + data.LastPrice;
+          resolve(price);
+        }
     });
   });
 });
